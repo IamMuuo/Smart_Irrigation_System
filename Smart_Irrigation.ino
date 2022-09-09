@@ -6,9 +6,9 @@
  * 
  ***********************************************************************/
  
-#define ANALOGIN 0  // sets the analog input pin
+#define DIGITAL_IN 9  // sets the analog input pin
 #define BAUDRATE 19200  // sets the baud rate
-int sensorValue = 0;  // variato hold the sensor reading value
+int sensorValue = 0;  // variable to hold the sensor reading value
  
 
 
@@ -21,7 +21,16 @@ void setup() {
 }
 
 void loop() {
-  sensorValue = analogRead(ANALOGIN); // read the sensor input
+  sensorValue = digitalRead(DIGITAL_IN); // read the sensor input
+
+  if(sensorValue == 1)
+  {
+      Serial.println("Dry soil detected. Turning on pump...\n");
+  }
+  else
+  {
+      Serial.println("Soil is wet, turning off pump..\n");
+  }
 
   Serial.println(sensorValue);  // log the sensor value to the screen
 
