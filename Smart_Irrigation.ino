@@ -6,13 +6,16 @@
  * 
  ***********************************************************************/
  
-#define DIGITAL_IN A0  // sets the digital input pin
+#define MOISTURE_SENSOR_IN A0  // sets the digital input pin
 #define RELAYPIN 7
 #define BAUDRATE 19200  // sets the baud rate
 #define DRYPIN 8
 #define WETPIN 9  // variable to hold the sensor reading value'
+#define WATERING_PIN 10
+#define WATER_THRESHOLD 195
+#define DRY_THRESHOLD 450
 
-float sensorValue = 0;
+
 
 
 void setup() {
@@ -21,15 +24,23 @@ void setup() {
   pinMode(RELAYPIN, OUTPUT);
   pinMode(DRYPIN, OUTPUT);
   pinMode(WETPIN, OUTPUT);
+
+  pinMode(LED_BUILTIN, OUTPUT);
   
   Serial.println("Initializing...\n");
 
 }
 
 void loop() {
-  sensorValue = analogRead(DIGITAL_IN); // read the sensor input
+  float sensorValue = 0;
+  float percentage = 0.0f;
 
-  if(sensorValue >= 500)
+
+  sensorValue = analogRead(MOISTURE_SENSOR_IN); // read the sensor input
+  percentage = map(sensorValue, WATER_THRESHOLD, DRY_THRESHOLD, 100, 0.0);
+
+  
+  if(percentage >= 50)
   {
       Serial.println("Dry soil detected. Turning on pump...\n");
       digitalWrite(RELAYPIN, HIGH);
@@ -44,9 +55,18 @@ void loop() {
       digitalWrite(WETPIN, HIGH);
   }
 
-  Serial.println(sensorValue);  // log the sensor value to the screen
+  if(digitalRead(RELAYPIN) == 1)
+  {
+    digitalWrite(WETPIN, LOW);
+    digitalWrite(DRYPIN, LOW);
+    digitalWrite(WATERING_PIN, HIGH);
+  }
 
-  delay(1000);
+
+   
+  Serial.println(percentage);  // log the sensor value to the screen
+
+  delay(5000);
 
 
 }
